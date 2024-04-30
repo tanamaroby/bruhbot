@@ -48,6 +48,10 @@ bot.command("skibidi", (ctx) => {
   });
 });
 
+bot.catch((err) => {
+  console.error(err);
+});
+
 bot
   .start({
     allowed_updates: ["chat_member", "message"],
