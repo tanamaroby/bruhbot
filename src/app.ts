@@ -1,36 +1,52 @@
 import dotenv from "dotenv";
-import { Telegraf } from "telegraf";
-import { introductionMessage } from "./const";
+import {
+  helpMessage,
+  introductionMessage,
+  makeAllMessage,
+  skibidiMessage,
+} from "./const";
+import { Bot, Context, MemorySessionStorage } from "grammy";
+import { chatMembers, ChatMembersFlavor } from "@grammyjs/chat-members";
+import { ChatMember } from "grammy/types";
+import { get, map } from "lodash";
 
 dotenv.config();
-const bot: Telegraf = new Telegraf(process.env.BOT_TOKEN as string, {});
+type MyContext = Context & ChatMembersFlavor;
+const adapter = new MemorySessionStorage<ChatMember>();
+const bot = new Bot<MyContext>(process.env.BOT_TOKEN as string);
+bot.use(chatMembers(adapter));
 
-bot.start((ctx) => {
+bot.command("start", (ctx) => {
   ctx.reply(introductionMessage, {
     parse_mode: "HTML",
   });
 });
 
-bot.help((ctx) => {
-  ctx.reply("Send /start to receive a greeting!");
-  ctx.reply("Send /help to obtain all the bots commands");
-  ctx.reply(
-    "Send /all <message> to ping everyone in this chat with the message"
-  );
+bot.command("help", (ctx) => {
+  ctx.reply(helpMessage, {
+    parse_mode: "HTML",
+  });
 });
 
-bot.command("all", (ctx) => {
-  ctx.reply("You have selected the all command!");
+bot.command("all", async (ctx) => {
+  const chatAdmins = await ctx.getChatAdministrators();
+  const from = await ctx.message?.from?.username;
+  const message = await ctx.message?.text;
+  const chatMembers = map(chatAdmins, (chatAdmin) => chatAdmin.user.username);
+  ctx.reply(makeAllMessage(from ?? "user", chatMembers, message ?? ""), {
+    parse_mode: "HTML",
+  });
 });
 
-bot.catch((err, ctx) => {
-  console.log("Bot has encountered an error for " + ctx.updateType, err);
+bot.command("skibidi", (ctx) => {
+  ctx.reply(skibidiMessage, {
+    parse_mode: "HTML",
+  });
 });
 
 bot
-  .launch()
+  .start({
+    allowed_updates: ["chat_member", "message"],
+  })
   .then(() => console.log("Bot started!"))
   .catch((err) => console.error(err));
-
-process.once("SIGINT", () => bot.stop("SIGINT"));
-process.once("SIGTERM", () => bot.stop("SIGTERM"));
