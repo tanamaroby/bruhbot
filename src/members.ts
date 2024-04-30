@@ -1,0 +1,15 @@
+export const specialMembers = [
+  "rapchicken",
+  "Dax5678",
+  "Xinyang_H",
+  "JTY150",
+  "Jae_34",
+  "Tengpc",
+  "sena0112",
+  "solszh",
+  "ffmakesart",
+  "ons3negg",
+  "gka1m",
+  "breadlo",
+  "PrimoSpace_Andy",
+];

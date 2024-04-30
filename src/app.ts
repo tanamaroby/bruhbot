@@ -8,7 +8,8 @@ import {
 import { Bot, Context, MemorySessionStorage } from "grammy";
 import { chatMembers, ChatMembersFlavor } from "@grammyjs/chat-members";
 import { ChatMember } from "grammy/types";
-import { get, map } from "lodash";
+import { get, map, union } from "lodash";
+import { specialMembers } from "./members";
 
 dotenv.config();
 type MyContext = Context & ChatMembersFlavor;
@@ -32,7 +33,10 @@ bot.command("all", async (ctx) => {
   const chatAdmins = await ctx.getChatAdministrators();
   const from = await ctx.message?.from?.username;
   const message = await ctx.message?.text;
-  const chatMembers = map(chatAdmins, (chatAdmin) => chatAdmin.user.username);
+  const chatMembers = union(
+    map(chatAdmins, (chatAdmin) => chatAdmin.user.username),
+    specialMembers
+  );
   ctx.reply(makeAllMessage(from ?? "user", chatMembers, message ?? ""), {
     parse_mode: "HTML",
   });
