@@ -4,13 +4,13 @@ import {
   conversations,
   createConversation,
 } from "@grammyjs/conversations";
+import { freeStorage } from "@grammyjs/storage-free";
 import dotenv from "dotenv";
 import { Bot, Context, session, SessionFlavor } from "grammy";
+import { find, includes, isNil, map, union } from "lodash";
 import { helpMessage, introductionMessage, skibidiMessage } from "./const";
 import { all } from "./conversations";
 import { SessionData } from "./types";
-import { freeStorage } from "@grammyjs/storage-free";
-import { find, includes, isNil, join, map, union } from "lodash";
 
 dotenv.config();
 export type MyContext = Context &
