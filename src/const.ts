@@ -8,7 +8,8 @@ I'm coded by some developer from 42 piscine.
 /start - Starts the bot!
 /help - Shows a bunch of commands available
 /all message - Pings everyone in the group with the message!
-/skibidi - Plays the skibidi`;
+/skibidi - Plays the skibidi
+/count - Counts the number of times the user has spoken in this chat`;
 
 export const helpMessage = `Hi! Here are the commands available in this bot and how to use them.
 
@@ -21,10 +22,13 @@ Example: <code>/start</code>
 Example: <code>/help</code>
 
 /all message - Pings everyone in the group with the message specified
-Example: <code>/all Hi Everyone!</code>
+Example: <code>/all</code>
 
 /skibidi - Plays the skibidi
-Example: <code>/skibidi</code>`;
+Example: <code>/skibidi</code>
+
+/count - Counts the number of times the user has spoken in this chat
+Example: <code>/count</code>`;
 
 export const skibidiMessage =
   "<b>Skibidi bob bop bop yes YES, Skibidi Bapidi BEE BEEP</b>";
