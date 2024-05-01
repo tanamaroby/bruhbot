@@ -1,21 +1,25 @@
-import dotenv from "dotenv";
-import {
-  helpMessage,
-  introductionMessage,
-  makeAllMessage,
-  skibidiMessage,
-} from "./const";
-import { Bot, Context, MemorySessionStorage } from "grammy";
 import { chatMembers, ChatMembersFlavor } from "@grammyjs/chat-members";
+import {
+  Conversation,
+  ConversationFlavor,
+  conversations,
+  createConversation,
+} from "@grammyjs/conversations";
+import dotenv from "dotenv";
+import { Bot, Context, MemorySessionStorage, session } from "grammy";
 import { ChatMember } from "grammy/types";
-import { get, map, union } from "lodash";
-import { specialMembers } from "./members";
+import { helpMessage, introductionMessage, skibidiMessage } from "./const";
+import { all } from "./conversations";
 
 dotenv.config();
-type MyContext = Context & ChatMembersFlavor;
+export type MyContext = Context & ChatMembersFlavor & ConversationFlavor;
+export type MyConversation = Conversation<MyContext>;
 const adapter = new MemorySessionStorage<ChatMember>();
 const bot = new Bot<MyContext>(process.env.BOT_TOKEN as string);
+
 bot.use(chatMembers(adapter));
+bot.use(session({ initial: () => ({}) }));
+bot.use(conversations());
 
 bot.command("start", (ctx) => {
   ctx.reply(introductionMessage, {
@@ -29,17 +33,15 @@ bot.command("help", (ctx) => {
   });
 });
 
+bot.use(createConversation(all));
+
 bot.command("all", async (ctx) => {
-  const chatAdmins = await ctx.getChatAdministrators();
-  const from = await ctx.message?.from?.username;
-  const message = await ctx.message?.text;
-  const chatMembers = union(
-    map(chatAdmins, (chatAdmin) => chatAdmin.user.username),
-    specialMembers
-  );
-  ctx.reply(makeAllMessage(from ?? "user", chatMembers, message ?? ""), {
-    parse_mode: "HTML",
-  });
+  const groupType = (await ctx.getChat()).type;
+  if (groupType == "private") {
+    ctx.reply("You can only use this command in a group!");
+    return;
+  }
+  await ctx.conversation.enter("all");
 });
 
 bot.command("skibidi", (ctx) => {

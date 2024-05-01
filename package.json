@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@grammyjs/chat-members": "^1.1.0",
+    "@grammyjs/conversations": "^1.2.0",
     "@types/lodash": "^4.17.0",
     "dotenv": "^16.4.5",
     "grammy": "^1.22.4",
